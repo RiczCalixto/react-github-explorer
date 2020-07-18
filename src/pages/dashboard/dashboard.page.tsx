@@ -1,5 +1,6 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import {
+  Error,
   Title,
   SearchForm,
   RepositoriesList,
@@ -24,14 +25,22 @@ interface Owner {
 export const DashboardPage: React.FC = () => {
   const [repositories, setRepositories] = useState<RepositoryState[]>([]);
   const [inputValue, setInputValue] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const response = await api.get<RemoteRepository>(`repos/${inputValue}`);
-    const repository = mapRemoteRepository(response?.data);
+    if (!inputValue)
+      return setErrorMessage('Favor digitar autor/repositório para buscar.');
+    try {
+      const response = await api.get<RemoteRepository>(`repos/${inputValue}`);
+      const repository = mapRemoteRepository(response?.data);
 
-    setRepositories([...repositories, repository]);
-    setInputValue('');
+      setRepositories([...repositories, repository]);
+      setInputValue('');
+      setErrorMessage('');
+    } catch (error) {
+      setErrorMessage('Repositório ou autor inexistente');
+    }
   };
 
   const handleChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
@@ -41,8 +50,10 @@ export const DashboardPage: React.FC = () => {
   return (
     <>
       <img src={logoImg} alt="Github Explorer" />
+
       <Title>Explore repositórios do Github.</Title>
-      <SearchForm onSubmit={handleSubmit}>
+
+      <SearchForm onSubmit={handleSubmit} hasError={!!errorMessage}>
         <input
           placeholder="Digite o nome do repositório"
           onChange={handleChangeValue}
@@ -50,6 +61,13 @@ export const DashboardPage: React.FC = () => {
         />
         <button type="submit">Pesquisar</button>
       </SearchForm>
+
+      {errorMessage && (
+        <Error>
+          <strong>{errorMessage}</strong>
+        </Error>
+      )}
+
       <RepositoriesList>
         {repositories.map(repository => (
           <ListItem key={repository.id} repository={repository} />

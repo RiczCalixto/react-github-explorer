@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, ChangeEvent } from 'react';
+import React, { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import {
   Error,
   Title,
@@ -22,10 +22,22 @@ interface Owner {
   avatarUrl: string;
 }
 
+const APP_ID = '@GithubExplorer:repositories';
+
 export const DashboardPage: React.FC = () => {
-  const [repositories, setRepositories] = useState<RepositoryState[]>([]);
+  const storagedRepositories = (): RepositoryState[] => {
+    const savedRepositories = localStorage.getItem(APP_ID);
+    return savedRepositories ? JSON.parse(savedRepositories) : [];
+  };
+  const [repositories, setRepositories] = useState<RepositoryState[]>(
+    storagedRepositories,
+  );
   const [inputValue, setInputValue] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem(APP_ID, JSON.stringify(repositories));
+  }, [repositories]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

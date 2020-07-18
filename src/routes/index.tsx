@@ -5,6 +5,6 @@ import { DashboardPage, RepositoryPage } from '../pages';
 export const Routes: React.FC = () => (
   <Switch>
     <Route path="/" exact component={DashboardPage} />
-    <Route path="/repository" component={RepositoryPage} />
+    <Route path="/repository/:fullName+" component={RepositoryPage} />
   </Switch>
 );

@@ -1,5 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
-import githubBackground from '../assets/github.svg';
+import githubBackground from '../assets/github-background.svg';
+import tw from 'twin.macro';
 
 export const GlobalStyle = createGlobalStyle`
   *{
@@ -15,13 +16,11 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body, input, button {
-    font: 16px sans-serif;
+    ${tw`font-sans text-base`}
   }
 
   #root {
-    max-width: 960px;
-    margin:0 auto;
-    padding: 40px 20px;
+    ${tw`my-0 mx-auto py-12 px-4 max-w-screen-lg`}
   }
 
   button{

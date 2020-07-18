@@ -35,7 +35,7 @@ export const RepositoriesList = styled.div`
     }
 
     div {
-      ${tw`mx-5`}
+      ${tw`mx-5 flex`}
 
       strong {
         ${tw`text-gray-600 text-lg`}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
 import {
   Title,
   SearchForm,
@@ -6,21 +6,54 @@ import {
 } from '../../styled-components/components.styles';
 import logoImg from '../../assets/logo.svg';
 import { ListItem } from './list-item.component';
+import { api } from '../../services/api';
+import { mapRemoteRepository, RemoteRepository } from './dashboard.mapper';
 
-const MOCK_SRC =
-  'https://avatars1.githubusercontent.com/u/38529592?s=460&u=54d0d146c8eaf10d101ef47d124fb7c1f184a984&v=4';
+export interface RepositoryState {
+  id: number;
+  fullName: string;
+  description: string;
+  owner: Owner;
+}
+
+interface Owner {
+  login: string;
+  avatarUrl: string;
+}
 
 export const DashboardPage: React.FC = () => {
+  const [repositories, setRepositories] = useState<RepositoryState[]>([]);
+  const [inputValue, setInputValue] = useState('');
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const response = await api.get<RemoteRepository>(`repos/${inputValue}`);
+    const repository = mapRemoteRepository(response?.data);
+
+    setRepositories([...repositories, repository]);
+    setInputValue('');
+  };
+
+  const handleChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+
   return (
     <>
       <img src={logoImg} alt="Github Explorer" />
       <Title>Explore repositórios do Github.</Title>
-      <SearchForm>
-        <input placeholder="Digite o nome do repositório" />
+      <SearchForm onSubmit={handleSubmit}>
+        <input
+          placeholder="Digite o nome do repositório"
+          onChange={handleChangeValue}
+          value={inputValue}
+        />
         <button type="submit">Pesquisar</button>
       </SearchForm>
       <RepositoriesList>
-        <ListItem src={MOCK_SRC} />
+        {repositories.map(repository => (
+          <ListItem key={repository.id} repository={repository} />
+        ))}
       </RepositoriesList>
     </>
   );

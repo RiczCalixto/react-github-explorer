@@ -1,26 +1,22 @@
 import React from 'react';
 import { FiChevronRight } from 'react-icons/fi';
+import { RepositoryState } from './dashboard.page';
 
 interface ListItemProps {
-  src: string;
+  repository: RepositoryState;
 }
 
-export const ListItem: React.FC<ListItemProps> = ({ src }) => {
+export const ListItem: React.FC<ListItemProps> = ({ repository }) => {
+  const { fullName, description, owner } = repository;
+  const { login, avatarUrl } = owner;
+
   return (
     <>
       <a href="Teste">
-        <img src={src} alt="Ric" />
+        <img src={avatarUrl} alt={login} />
         <div>
-          <strong>Rickz</strong>
-          <p>Github do Ricardo</p>
-        </div>
-        <FiChevronRight size={20} />
-      </a>
-      <a href="Teste">
-        <img src={src} alt="Ric" />
-        <div>
-          <strong>Rickz</strong>
-          <p>Github do Ricardo</p>
+          <strong>{fullName}</strong>
+          <p>{description}</p>
         </div>
         <FiChevronRight size={20} />
       </a>
